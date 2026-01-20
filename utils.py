@@ -32,11 +32,17 @@ def generate_dataset(archivo_salida='dataset.csv'):
     
     # Save the dataset (overwrite if it already exists)
     df.to_csv(archivo_salida, index=False)
+        
+    return df
+
+def generate_df_avg_age(df: pd.DataFrame) -> pd.DataFrame:
+    # Calculate average age from existing (non-null) values
+    avg_age = df["Edad"].mean()
     
-    print(f"Dataset generado exitosamente: {archivo_salida}")
-    print(f"Total de filas: {len(df)}")
-    print(f"Valores nulos en Edad: {df['Edad'].isna().sum()}")
-    print(f"Distribución de Compró_Producto:")
-    print(df['Compró_Producto'].value_counts())
+    for index in df.index:
+        # If a missing value is found
+        if pd.isna(df.loc[index, 'Edad']):
+            # Fill it with the average of existing ages
+            df.loc[index, 'Edad'] = avg_age
     
     return df
