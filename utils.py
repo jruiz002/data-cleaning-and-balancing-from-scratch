@@ -46,3 +46,23 @@ def generate_df_avg_age(df: pd.DataFrame) -> pd.DataFrame:
             df.loc[index, 'Edad'] = avg_age
     
     return df
+
+
+def manual_undersampling(df: pd.DataFrame, target_column: str = 'Compró_Producto') -> pd.DataFrame:
+    # Separate minority class (1) and majority class (0)
+    minority_class = df[df[target_column] == 1]
+    majority_class = df[df[target_column] == 0]
+    
+    # Get the number of samples in minority class
+    minority_count = len(minority_class)
+    
+    # Randomly select the same number of samples from majority class
+    majority_class_downsampled = majority_class.sample(n=minority_count, random_state=42)
+    
+    # Combine minority class with downsampled majority class
+    df_balanced = pd.concat([minority_class, majority_class_downsampled])
+    
+    # Shuffle the resulting DataFrame to mix the classes
+    df_balanced = df_balanced.sample(frac=1, random_state=42).reset_index(drop=True)
+        
+    return df_balanced
